@@ -41,6 +41,8 @@ contract NFT is ERC721URIStorage {
     unicode"🐍"
   ];
 
+  event NewNFTMinted(address sender, uint256 tokenId);
+
   constructor() ERC721("TripleEmoji", "TRIMOJI") {
     console.log("This is my NFT contract. Whoa!");
   }
@@ -132,5 +134,7 @@ contract NFT is ERC721URIStorage {
     console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
 
     _tokenIds.increment();
+
+    emit NewNFTMinted(msg.sender, newItemId);
   }
 }

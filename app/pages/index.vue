@@ -37,14 +37,26 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const OPENSEA_LINK = '';
 const TOTAL_MINT_COUNT = 50;
 
+interface BaseComponentData {
+  connectedContract: ethers.Contract | null
+  currentAccount: string | null
+  twitterHandle: string
+  twitterLink: string
+  openseaLink: string
+  totalMintCount: number
+}
+
 export default Vue.extend({
-  data: () => ({
-    currentAccount: null,
-    twitterHandle: TWITTER_HANDLE,
-    twitterLink: TWITTER_LINK,
-    openseaLink: OPENSEA_LINK,
-    totalMintCount: TOTAL_MINT_COUNT,
-  }),
+  data(): BaseComponentData {
+    return {
+      connectedContract: null,
+      currentAccount: null,
+      twitterHandle: TWITTER_HANDLE,
+      twitterLink: TWITTER_LINK,
+      openseaLink: OPENSEA_LINK,
+      totalMintCount: TOTAL_MINT_COUNT,
+    }
+  },
   methods: {
     async checkIfWalletConnected() {
       // @ts-ignore
@@ -65,7 +77,24 @@ export default Vue.extend({
         console.log('No accounts found')
       }
     },
+    async verifyRinkebyNetwork() {
+      // @ts-ignore
+      const { ethereum } = window
+
+      if (!ethereum) {
+        console.log('Make sure you have Metamask!')
+        return
+      }
+
+      const network = await ethereum.request({ method: 'eth_chainId' })
+
+      if (network !== '0x4') {
+        console.log('Make sure you are on the Rinkeby network!')
+        return
+      }
+    },
     async connectWallet() {
+      await this.verifyRinkebyNetwork()
       try {
         // @ts-ignore
         const { ethereum } = window;
@@ -89,29 +118,48 @@ export default Vue.extend({
         console.log(error)
       }
     },
-    async askContractToMintNft() {
-      const CONTRACT_ADDRESS = "0xFa3C9DC7339520D5e29720cC4805F974A89DcD53";
-      try {
-        // @ts-ignore
-        const { ethereum } = window;
+    configureConnectedContract() {
+      // @ts-ignore
+      const { ethereum } = window
+      const CONTRACT_ADDRESS = "0x2FC3E8d35C3D2798221ED7d601DE6Ee77257D0BF"
 
-        if (ethereum) {
-          const provider = new ethers.providers.Web3Provider(ethereum);
-          const signer = provider.getSigner();
-          const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, NFT.abi, signer);
+      if (!ethereum) {
+        console.log("Ethereum object doesn't exist!")
+        return false
+      }
 
-          console.log("Going to pop wallet now to pay gas...")
-          let nftTxn = await connectedContract.make();
+      if (this.connectedContract) {
+        return this.connectedContract
+      } else {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
 
-          console.log("Mining...please wait.")
-          await nftTxn.wait();
-          console.log(nftTxn)
-
-          console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
-
-        } else {
-          console.log("Ethereum object doesn't exist!");
+        this.connectedContract = new ethers.Contract(CONTRACT_ADDRESS, NFT.abi, signer)
+        if (this.connectedContract) {
+          this.connectedContract.on("NewNFTMinted", (from, tokenId) => {
+            console.log(from, tokenId.toNumber())
+            alert(`Hey there! We've minted your NFT. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: <https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}>`)
+          })
         }
+      }
+    },
+    async askContractToMintNft() {
+      try {
+        await this.configureConnectedContract()
+
+        if (!this.connectedContract) {
+          console.log("Contract not connected!")
+          return
+        }
+
+        console.log("Going to pop wallet now to pay gas...")
+        let nftTxn = await this.connectedContract.make();
+
+        console.log("Mining...please wait.")
+        await nftTxn.wait();
+        console.log(nftTxn)
+
+        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
       } catch (error) {
         console.log(error)
       }
