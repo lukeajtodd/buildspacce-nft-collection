@@ -6,15 +6,15 @@ const main = async () => {
   await nftContract.deployed();
   console.log("Contract deployed to: ", nftContract.address);
 
-  let txn = await nftContract.make();
+  // let txn = await nftContract.make();
 
-  await txn.wait();
-  console.log("Minted 1: ", txn.hash);
+  // await txn.wait();
+  // console.log("Minted 1: ", txn.hash);
 
-  txn = await nftContract.make();
+  // txn = await nftContract.make();
 
-  await txn.wait();
-  console.log("Minted 2: ", txn.hash);
+  // await txn.wait();
+  // console.log("Minted 2: ", txn.hash);
 };
 
 const runMain = async () => {
