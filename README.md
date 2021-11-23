@@ -1,46 +1,23 @@
-# Advanced Sample Hardhat Project
+# NFT Collection
 
-This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
+Built as part of the run through around Ethereum, Solidity and shipping that stuff on Buildspace!
 
-The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
+## Initialisation
 
-Try running some of the following tasks:
+- Copy the env.example file to .env and fill in the relevant details
+-- We used Alchemy for the Rinkeby testnet clone to work with
+-- The private key is the account you want to mint with
+- `npm i` that goodness
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-npx hardhat help
-REPORT_GAS=true npx hardhat test
-npx hardhat coverage
-npx hardhat run scripts/deploy.ts
-TS_NODE_FILES=true npx ts-node scripts/deploy.ts
-npx eslint '**/*.{js,ts}'
-npx eslint '**/*.{js,ts}' --fix
-npx prettier '**/*.{json,sol,md}' --check
-npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'contracts/**/*.sol'
-npx solhint 'contracts/**/*.sol' --fix
-```
+## Running it
 
-# Etherscan verification
+- `npx hardhat run scripts/run.ts`
+-- This will be for local testing within hardhat. The script can be rejigged for what you need to do. It currently mints a single NFT.
+- `npx hardhat run scripts/deploy.ts`
+-- This will deploy the current smart contracts (alongside compiling them) to the Rinkeby testnet that we have set up.
 
-To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
+### Todo
 
-In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
-
-```shell
-hardhat run --network ropsten scripts/sample-script.ts
-```
-
-Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
-
-```shell
-npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
-```
-
-# Performance optimizations
-
-For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
+- Improved UI and personal styling
+- Show the currently connected wallets minted NFTs on the main page
+- Limit the total supply of the NFT
