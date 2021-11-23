@@ -32,7 +32,7 @@ import { ethers } from 'ethers'
 import NotConnected from '../components/NotConnected.vue'
 import NFT from '../utils/NFT.json'
 
-const TWITTER_HANDLE = '_buildspace';
+const TWITTER_HANDLE = 'luketodddev';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const OPENSEA_LINK = '';
 const TOTAL_MINT_COUNT = 50;
